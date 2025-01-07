@@ -2,7 +2,7 @@
 This repo has the kubernetes concept demo for **PODS, Deployments, StatefulSets, DaemonSets, services and Ingress**
 
 ## PODS
-The **pods.yml** file contains the tasks for pods creations.
+The **pods** branch contains the tasks for pods creations.
 ### Task 1:
 You should create a pod by following the requirements:
 - **Pod Name**: `nginx-pod`
@@ -12,7 +12,7 @@ You should create a pod by following the requirements:
 - **Container Port**: `80`
 
 ### Task 2:
-Please find a pod called **save-me** and save its manifest (yaml output format) to `$HOME/k8s_pods/save-me-pod.yml`.
+Please find a pod called **save-me** and save its manifest (YAML output format) to `$HOME/k8s_pods/save-me-pod.yml`.
 
 ## Task 3:
 A new Pod **web** has been deployed in **namespace**: `trouble`. It has failed. Please find it, figure out the reason and fix it.
@@ -49,7 +49,7 @@ Specify the following ENV variables for the main container:
 
 `STUDENT_FIRST_NAME: <yourname>`
 `STUDENT_LAST_NAME: <yourlastname>`
-Check Pod logs with `kubectl` logs command. Should be similar to this:
+Check Pod logs with `kubectl` logs command. It Should be similar to this:
 ```
 ... 
 STUDENT_FIRST_NAME=Ivan 
@@ -77,15 +77,15 @@ Create a static pod.
 
 Requirements:
 
-Pod name: nginx-static
-Pod image: nginx:alpine
-Pod label: app=nginx-static
-Namespace: static
-Container Port: 80
+- **Pod name**: `nginx-static`
+- **Pod image**: `nginx:alpine`
+- **Pod label**: `app=nginx-static`
+- **Namespace**: `static`
+- **Container Port**: `80`
 How to verify: Try to delete static pod. It should be recreated
 
-Do not forget to copy secret phrase, test will fail after next task.
+Remember to copy secret phrase, test will fail after the next task.
 
-Task 11(advanced):
+### Task 11(advanced):
 
 Delete a static pod nginx-static
