@@ -86,7 +86,7 @@ How to verify: Try to delete static pod. It should be recreated
 
 Do not forget to copy secret phrase, test will fail after next task.
 
-Task 11(advanced):
+### Task 11(advanced):
 
 Delete a static pod nginx-static
 
@@ -144,3 +144,39 @@ A lemon deployment has been deployed in namespace trouble, but there are no pods
 ### Task 7:
 A orange deployment has been deployed in namespace trouble, but it doesn’t work properly. Figure out the root cause and fix the issue.
 
+## StatefulSets
+
+Task 1:
+
+Create a new StatefulSet:
+
+Requirements:
+ Name: random-generator
+ Image: sbeliakou/random-generator:1
+ Namespace: default
+ Replicas: 3
+ Service: random-generator
+ Labels: app=random-generator
+Do not forget to copy secret phrase, test will fail after task 3.
+
+Task 2:
+
+Add volumeClaimTemplates to random-generator sts. Recreate statefulset if it’s needed.
+
+Name: logs
+mountPath: /logs
+Capacity: 10Mi
+accessMode: ReadWriteOnce
+Task 3:
+
+Update container’s image to version 2.
+
+Please pay attention to the way how StatefulSet recreates pods. It starts from 2 and goes to 0.
+
+Task 4:
+
+Run any test pod. Using nslookup check the record of random-generator service. Save the output of the below commands to $HOME/k8s_sts.txt
+
+nslookup random-generator-0.random-generator.default.svc.cluster.local
+nslookup random-generator-1.random-generator.default.svc.cluster.local
+nslookup random-generator-2.random-generator.default.svc.cluster.local
