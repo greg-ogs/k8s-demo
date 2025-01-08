@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"2"},"creationTimestamp":"2024-12-26T21:12:24Z","generation":2,"name":"orange","namespace":"trouble","resourceVersion":"114698","uid":"7d05d148-524f-402a-8757-05dd6423aa08"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"orange"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"orange"}},"spec":{"containers":[{"command":["sh","c","sleep infinity"],"image":"alpine","imagePullPolicy":"Always","name":"orange","resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File"}],"dnsPolicy":"ClusterFirst","restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30}}},"status":{"conditions":[{"lastTransitionTime":"2024-12-26T21:12:24Z","lastUpdateTime":"2024-12-26T21:12:24Z","message":"Deployment does not have minimum availability.","reason":"MinimumReplicasUnavailable","status":"False","type":"Available"},{"lastTransitionTime":"2024-12-26T23:02:56Z","lastUpdateTime":"2024-12-26T23:02:56Z","message":"ReplicaSet \"orange-84457c8f7b\" is progressing.","reason":"ReplicaSetUpdated","status":"True","type":"Progressing"}],"observedGeneration":2,"replicas":2,"unavailableReplicas":2,"updatedReplicas":1}}
+  creationTimestamp: "2024-12-26T23:07:26Z"
+  generation: 1
+  name: orange
+  namespace: trouble
+  resourceVersion: "115359"
+  uid: 859cbc2d-a3de-43c6-aeaf-3a108d923423
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: orange
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: orange
+    spec:
+      containers:
+      - command: ["sleep", "infinity"]
+        image: alpine
+        imagePullPolicy: Always
+        name: orange
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  conditions:
+  - lastTransitionTime: "2024-12-26T23:07:26Z"
+    lastUpdateTime: "2024-12-26T23:07:26Z"
+    message: Deployment does not have minimum availability.
+    reason: MinimumReplicasUnavailable
+    status: "False"
+    type: Available
+  - lastTransitionTime: "2024-12-26T23:17:45Z"
+    lastUpdateTime: "2024-12-26T23:17:45Z"
+    message: ReplicaSet "orange-84457c8f7b" has timed out progressing.
+    reason: ProgressDeadlineExceeded
+    status: "False"
+    type: Progressing
+  observedGeneration: 1
+  replicas: 1
+  unavailableReplicas: 1
+  updatedReplicas: 1

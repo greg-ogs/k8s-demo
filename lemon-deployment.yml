@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"lemon","namespace":"trouble"},"spec":{"replicas":0,"selector":{"matchLabels":{"app":"lemon"}},"template":{"metadata":{"labels":{"app":"lemon"}},"spec":{"containers":[{"image":"nginx:alpine","name":"lemon"}]}}}}
+  creationTimestamp: "2024-12-26T21:12:24Z"
+  generation: 1
+  name: lemon
+  namespace: trouble
+  resourceVersion: "108481"
+  uid: 8962a719-7d7e-482c-8511-bdc546ed19f1
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: lemon
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: lemon
+    spec:
+      containers:
+      - image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        name: lemon
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  conditions:
+  - lastTransitionTime: "2024-12-26T21:12:24Z"
+    lastUpdateTime: "2024-12-26T21:12:24Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2024-12-26T21:12:24Z"
+    lastUpdateTime: "2024-12-26T21:12:24Z"
+    message: ReplicaSet "lemon-6797f5bdf8" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 1

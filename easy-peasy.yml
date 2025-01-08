@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easy-peasy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: easy-peasy
+  template:
+    metadata:
+      labels:
+        app: easy-peasy
+    spec:
+      containers:
+      - name: easy-peasy
+        image: busybox:1.34
+        command: ["sleep", "infinity"]
