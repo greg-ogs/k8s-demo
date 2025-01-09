@@ -71,7 +71,7 @@ Create a Pod (namespace: default, name: i-know-who-i-am, image: busybox:1.34, co
 ### Task 9:
 Delete all pods in clean-up namespace.
 
-Task 10(advanced)
+### Task 10(advanced)
 
 Create a static pod.
 
@@ -86,7 +86,7 @@ How to verify: Try to delete static pod. It should be recreated
 
 Do not forget to copy secret phrase, test will fail after next task.
 
-Task 11(advanced):
+### Task 11(advanced):
 
 Delete a static pod nginx-static
 
@@ -146,135 +146,147 @@ A orange deployment has been deployed in namespace trouble, but it doesn’t wor
 
 ## StatefulSets 
 
-Task 1:
+### Task 1:
 
-Create a new StatefulSet:
+Create a new **StatefulSet**:
 
-Requirements:
- Name: random-generator
- Image: sbeliakou/random-generator:1
- Namespace: default
- Replicas: 3
- Service: random-generator
- Labels: app=random-generator
+**Requirements**:
+ - **Name**: `random-generator`
+ - **Image**: `sbeliakou/random-generator:1`
+ - **Namespace**: `default`
+ - **Replicas**: `3`
+ - **Service**: `random-generator`
+ - **Labels**: `app=random-generator`
 Do not forget to copy secret phrase, test will fail after task 3.
 
-Task 2:
+### Task 2:
 
 Add volumeClaimTemplates to random-generator sts. Recreate statefulset if it’s needed.
 
-Name: logs
-mountPath: /logs
+- **Name**: `logs`
+- **mountPath**: `/logs`
 Capacity: 10Mi
 accessMode: ReadWriteOnce
-Task 3:
 
-Update container’s image to version 2.
-
+### Task 3:
+Update container’s image to version `2`.
 Please pay attention to the way how StatefulSet recreates pods. It starts from 2 and goes to 0.
 
-Task 4:
+### Task 4:
 
-Run any test pod. Using nslookup check the record of random-generator service. Save the output of the below commands to $HOME/k8s_sts.txt
-
+Run any test pod. Using nslookup check the record of random-generator service. Save the output of the 
+below commands to `$HOME/k8s_sts.tx`t
+```
 nslookup random-generator-0.random-generator.default.svc.cluster.local
 nslookup random-generator-1.random-generator.default.svc.cluster.local
 nslookup random-generator-2.random-generator.default.svc.cluster.local
+```
+
 
 ## DaemonSets
 
-Task 1:
+### Task 1:
 
-Create a new node and set up worker role for it.
+Create a new node and set up a **worker** role for it.
 
-Do not forget to copy secret phrase, test will fail after task 5.
+Remember to copy secret phrase, test will fail after task 5.
 
-Task 2:
-
+### Task 2:
 Taint your nodes.
 
-Requirements:
-control-plane:
-key: node-role.kubernetes.io/control-plane
-effect: NoSchedule
-worker:
-key: node-role.kubernetes.io/worker
-effect: NoSchedule
+**Requirements**:
+- **control-plane**:
+    - _key_: `node-role.kubernetes.io/control-plane`
+    - _effect_: `NoSchedule`
+- **worker**:
+  - key: `node-role.kubernetes.io/worker`
+  - effect: `NoSchedule`
 Do not forget to copy secret phrase, test will fail after task 6.
 
-Task 3:
+### Task 3:
 
-Deploy daemonset
+Deploy **daemonset**
 
-Requirements:
-Name: fluentd-elasticsearch
-Image: quay.io/fluentd_elasticsearch/fluentd:v4
+**Requirements**:
+- **Name**: `fluentd-elasticsearch`
+- **Image**: `quay.io/fluentd_elasticsearch/fluentd:v4`
 Please pay attention how many pods were created and why.
 
 Do not forget to copy secret phrase, test will fail after next task.
 
-Task 4:
+### Task 4:
 
-Modify fluentd-elasticsearch DaemonSet to ensure that pods run on every node.You should change only DaemonSet configuration!
+Modify **fluentd-elasticsearch** _*DaemonSet*_ to ensure that pods run on every **node**.You should change only DaemonSet configuration!
 
 Do not forget to copy secret phrase, test will fail after next task.
 
-Task 5:
+### Task 5:
 
-Create one more node and set up worker role for it.
+Create one more node and set up **worker** role for it.
 
 Please pay attention on number of pods.
 
 Do not forget to copy secret phrase, test will fail after task 6.
 
-Task 6:
+### Task 6:
 
 jq utility should be installed before running checker!
 
-Get details of nodes in JSON format and save it to $HOME/nodes-info.json file.
+Get details of nodes in JSON format and save it to `$HOME/nodes-info.json` file.
 Delete all worker nodes.
-Untaint control-plane node.
-Remove fluentd-elasticsearch DaemonSet.
+**Untaint** control-plane node.
+Remove **fluentd-elasticsearch** _*DaemonSet*_.
 
 ## Services
 
-Task 1:
+### Task 1:
 
-Create pod-info-svc service for pod-info-app deployment:
+Create **pod-info-svc** _*service*_ for **pod-info-app** _*deployment*_:
 
 Requirements:
- Name: pod-info-svc
- Type: ClusterIP
- Service Port: 80
- Service TargetPort: 80
-Investigate pod-info-app deployment and choose selector and do not change the deployment
+- **Name**: `pod-info-svc`
+- **Type**: `ClusterIP`
+- **Service Port**: `80`
+- **Service TargetPort**: `80`
+Investigate **pod-info-app** ***deployment*** and choose selector and do not change the deployment.
 
-Task 2:
+### Task 2:
 
-Run a pod (based on image busybox:1.28) and execute following commands (as given below) inside this pod and save outputs into files:
+Run a pod (based on image `busybox:1.28`) and execute the following commands (as given below) inside
+this pod and save outputs into files:
 
-wget -q -O- pod-info-svc save to $HOME/testing-clusterip-web.log
-nslookup pod-info-svc save to $HOME/testing-clusterip-nslookup.log
-Task 3:
+```
+wget -q -O- pod-info-svc  
+$HOME/testing-clusterip-web.log
+nslookup pod-info-svc
+$HOME/testing-clusterip-nslookup.log
+```
 
-Create deployment myapp, image: sbeliakou/web-pod-info:v1, replicas: 1
-Create headless service myapp-headless pointing to myapp pods
-Create non-headless service myapp-clusterip pointing to myapp pods
+### Task 3:
+
+Create deployment **myapp**, **image**: `sbeliakou/web-pod-info:v1`, **replicas**: _*1*_
+Create **headless service** ***myapp-headless*** pointing to **myapp** pods
+Create **non-headless service** ***myapp-clusterip*** pointing to **myapp** pods
 Checking name resolution:
 
 Non-headless service has own IP address (and port), and proxies traffic to backends:
 
+```
 $ kubectl run --rm -it test --image=busybox:1.27 --restart=Never nslookup myapp-clusterip
+```
 Headless service doesn’t proxy traffic to backends, it simply responds (on early dns lookup phase) with the IP address(es) where to go:
-
+```
 $ kubectl run --rm -it test --image=busybox:1.27 --restart=Never nslookup myapp-headless
-Task 4:
+```
 
-We have already created hello-hello web application for you. Create a new service to access this web application, check the requirements.Figure out all necessary settings from the deployment.
+### Task 4:
+We have already created **hello-hello** web application for you. Create a new service to access this web application, 
+check the requirements. Figure out all necessary settings from the deployment.
 
-Requirements:
- Name: hello-hello-service
- Type: NodePort
- Downstream Pod Port (Service targetPort): 80
- Node Port: 30300
-For verification you can execute `curl $NODE_IP:30300` command or open the browser page http://$NODE_IP:30300. Substitute $NODE_IP with the IP address of your node.
+**Requirements**:
+- **Name**: `hello-hello-service`
+- **Type**: `NodePort`
+- **Downstream Pod Port (Service targetPort)**: `80`
+- **Node Port**: `30300`
+For verification you can execute `curl $NODE_IP:30300` command or open the browser page ***http://$NODE_IP:30300***. 
+Substitute `$NODE_IP` with the IP address of your node.ication you can execute `curl $NODE_IP:30300` command or open the browser page http://$NODE_IP:30300. Substitute $NODE_IP with the IP address of your node.
