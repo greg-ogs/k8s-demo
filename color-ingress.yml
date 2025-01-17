@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aqua-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  spec:
+  rules:
+    - http:
+      - paths:
+        - path: /
+          pathType: Prefix
+      backend:
+        serviceName: aqua-svc
+        servicePort: 80
+  tls:
+    - hosts:
+      - aqua.k8slab.net
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maroon-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  spec:
+  rules:
+    - http:
+      - paths:
+        - path: /
+          pathType: Prefix
+      backend:
+        serviceName: maroon-svc
+        servicePort: 80
+  tls:
+    - hosts:
+      - maroon.k8slab.net
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: olive-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  spec:
+  rules:
+    - http:
+      - paths:
+        - path: /
+          pathType: Prefix
+      backend:
+        serviceName: olive-svc
+        servicePort: 80
+  tls:
+    - hosts:
+      - olive.k8slab.net
