@@ -1,6 +1,8 @@
 # Kubernetes demo
 This repo has the kubernetes concept demo for **PODS, Deployments, StatefulSets, DaemonSets, services and Ingress**
 
+Checker located in: https://elearn.epam.com/assets/courseware/v1/848da4ba7c2f919b3234d6cf16592649/asset-v1:RD_CIS+DOBCKubernetes+0422+type@asset+block/checker
+
 ## PODS
 The **pods.yml** file contains the tasks for pods creations.
 ### Task 1:
@@ -292,6 +294,9 @@ For verification you can execute `curl $NODE_IP:30300` command or open the brows
 Substitute `$NODE_IP` with the IP address of your node.
 
 ## Ingress
+
+Biniry located in: https://elearn.epam.com/assets/courseware/v1/b301a67bec1e4d500cca9949c10f14a8/asset-v1:RD_CIS+DOBCKubernetes+0422+type@asset+block/deploy_ing
+
 ### Task 1:
 
 There’re aqua,maroon and olive deployments created in default namespace. Please do the following:
