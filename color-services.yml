@@ -8,7 +8,7 @@ spec:
   ports:
   - protocol: TCP   # You'll likely want TCP
     port: 80        # The port your service exposes
-    targetPort: 8080 # The port your application is listening on within the pod
+    targetPort: 80 # The port your application is listening on within the pod
 ---
 apiVersion: v1
 kind: Service
@@ -20,7 +20,7 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8080
+    targetPort: 80
 ---
 apiVersion: v1
 kind: Service
@@ -32,4 +32,4 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8080
+    targetPort: 80
