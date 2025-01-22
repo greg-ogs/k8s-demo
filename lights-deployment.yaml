@@ -4,6 +4,7 @@ metadata:
   name: red-color
   labels:
     color: red
+    tier: lights
 spec:
   replicas: 3
   selector:
@@ -13,6 +14,7 @@ spec:
     metadata:
       labels:
         color: red
+        tier: lights
     spec:
       containers:
       - name: red-color
@@ -29,6 +31,7 @@ metadata:
   name: green-color
   labels:
     color: green
+    tier: lights
 spec:
   replicas: 1
   selector:
@@ -38,6 +41,7 @@ spec:
     metadata:
       labels:
         color: green
+        tier: lights
     spec:
       containers:
       - name: green-color
@@ -54,6 +58,7 @@ metadata:
   name: yellow-color
   labels:
     color: yellow
+    tier: lights
 spec:
   replicas: 2
   selector:
@@ -63,6 +68,7 @@ spec:
     metadata:
       labels:
         color: yellow
+        tier: lights
     spec:
       containers:
       - name: yellow-color
