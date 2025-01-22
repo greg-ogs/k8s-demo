@@ -6,7 +6,7 @@ spec:
   type: ClusterIP
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: 80
   selector:
     color: red
 ---
@@ -18,7 +18,7 @@ spec:
   type: ClusterIP
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: 80
   selector:
     color: green
 ---
@@ -30,9 +30,9 @@ spec:
   type: ClusterIP
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: 80
   selector:
-    color:  yellow
+    color: yellow
 ---
 apiVersion: v1
 kind: Service
@@ -41,7 +41,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 8080
+  - port: 8080
+    targetPort: 80
   selector:
     tier: color

@@ -19,7 +19,7 @@ spec:
           - name: COLOR
             value: red
           ports:
-          - containerPort: 8080
+          - containerPort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,7 +42,7 @@ spec:
           - name: COLOR
             value: green
           ports:
-          - containerPort: 8080
+          - containerPort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -65,4 +65,4 @@ spec:
           - name: COLOR
             value: yellow
           ports:
-          - containerPort: 8080
+          - containerPort: 80
