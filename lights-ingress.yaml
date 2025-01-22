@@ -14,24 +14,24 @@ spec:
             name: switch
             port:
               number: 80
-      - path: /maroon
+      - path: /red
         pathType: Prefix
         backend:
           service:
-            name: maroon-svc
+            name: red-svc
             port:
-              number: 80
-      - path: /
+              number: 8080
+      - path: /green
         pathType: Prefix
         backend:
           service:
-            name: olive-svc
+            name: green-svc
             port:
-              number: 80
-      - path: /*
+              number: 8080
+      - path: /yellow
         pathType: Prefix
         backend:
           service:
-            name: olive-svc
+            name: yellow-svc
             port:
               number: 8080
