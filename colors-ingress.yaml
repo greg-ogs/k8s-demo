@@ -13,25 +13,25 @@ spec:
           service:
             name: aqua-svc
             port:
-              number: 8080
-      - path: /red
+              number: 80
+      - path: /maroon
         pathType: Prefix
         backend:
           service:
-            name: red-svc
-            port:
-              number: 8080
-      - path: /green
-        pathType: Prefix
-        backend:
-          service:
-            name: green-svc
+            name: maroon-svc
             port:
               number: 80
-      - path: /yellow
+      - path: /olive
         pathType: Prefix
         backend:
           service:
-            name: yellow-svc
+            name: olive-svc
             port:
-              number: 8080
+              number: 80
+      - path: /*
+        pathType: Prefix
+        backend:
+          service:
+            name: olive-svc
+            port:
+              number: 80
