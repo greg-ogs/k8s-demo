@@ -13,7 +13,7 @@ spec:
             service:
               name: aqua-svc
               port:
-                number: 80
+                number: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -30,7 +30,7 @@ spec:
             service:
               name: maroon-svc
               port:
-                number: 80
+                number: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -47,4 +47,4 @@ spec:
             service:
               name: olive-svc
               port:
-                number: 80
+                number: 8080
