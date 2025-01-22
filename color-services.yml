@@ -7,7 +7,7 @@ spec:
     color: aqua  # Match pods with this label (from your deployment)
   ports:
   - protocol: TCP   # You'll likely want TCP
-    port: 8080        # The port your service exposes
+    port: 80        # The port your service exposes
     targetPort: 80 # The port your application is listening on within the pod
 ---
 apiVersion: v1
@@ -19,7 +19,7 @@ spec:
     color: maroon
   ports:
   - protocol: TCP
-    port: 8080
+    port: 80
     targetPort: 80
 ---
 apiVersion: v1
@@ -31,5 +31,5 @@ spec:
     color: olive
   ports:
   - protocol: TCP
-    port: 8080
+    port: 80
     targetPort: 80
