@@ -1,292 +1,269 @@
-# Kubernetes demo
-This repo has the kubernetes concept demo for **PODS, Deployments, StatefulSets, DaemonSets, services and Ingress**
+# DevOps BootCamp: Kubernetes Practical Task
 
-## PODS
-The **pods.yml** file contains the tasks for pods creations.
-### Task 1:
-You should create a pod by following the requirements:
-- **Pod Name**: `nginx-pod`
-- **Pod Image**: `nginx:alpine`
-- **Pod Label**: `app=nginx`
-- **Namespace**: `default`
-- **Container Port**: `80`
+We are glad to see you here!
 
-### Task 2:
-Please find a pod called **save-me** and save its manifest (yaml output format) to `$HOME/k8s_pods/save-me-pod.yml`.
+During this course you will become familiar with a lot of tools and technologies. We would like you to apply this knowledge in practice, otherwise it would be boring. There is a task for you, which you can do along with stydying materials from this course. So, without further adieu, let's begin this task!
 
-## Task 3:
-A new Pod **web** has been deployed in **namespace**: `trouble`. It has failed. Please find it, figure out the reason and fix it.
+**Be aware:**
+Don't make any changes not in **manifest.yml** file. It can break test logic.
 
-**Requirements**:
+# Description
 
-- **Image**: `nginx:1.19-alpine`
-- **Pod Status**: `Running`
+You need to build the app's container images and deploy them to Kubernetes.
 
-### Task 4:
-A new **redis-db** pod has been deployed in namespace trouble. It failed. Please fix it.
+## Requirements
 
-### Task 5:
-Create a new pod named **redis** with `redis:123` image. And yes, the image name is wrong!
+- Installed [jq utility](https://stedolan.github.io/jq/download/) 
 
-**Requirements**:
+## Application Description
 
-- **Name**: `redis`
-- **Image Name**: `redis:123`
-- **Namespace**: `default`
-Do not forget to copy secret phrase, test will fail after next task.
+The application will be deployed in 3-tier layers:
 
-### Task 6:
-Now please change that redis pod image to the correct version.
+- Presentation layer: Kubernetes NGINX Ingress;
+- Application layer: Flask application based on Docker image in Kubernetes pods;
+- Data layer: MongoDB based on Docker image in Kubernetes pods.
 
-**Requirements**:
+The Flask application provides users with possibility to change colour of website background.
 
-- **Name**: `redis`
-- **Image Name**: `redis:5-alpine`
+## Step Description
 
-### Task 7:
-Create a Pod (namespace: default, name: envtest, image: busybox:1.34, container process: env && sleep infinity). 
-Specify the following ENV variables for the main container:
+### Build application 
 
-`STUDENT_FIRST_NAME: <yourname>`
-`STUDENT_LAST_NAME: <yourlastname>`
-Check Pod logs with `kubectl` logs command. Should be similar to this:
+The first step of deploying the application is building Docker images and publish it to Docker registry.
+
+Application source code is placed in **application** directory.
+
+You need to fix *Dockerfile* so that Docker image complyes with the following requirements:
+
+- No Hashell Dockerfile linter errors and/or warnings 
+- Docker image name is `<nsurname>_application`
+- Docker image consists of the application and its requirements
+- Docker image might be placed in **private** DockerHub repository `<nsurname>_application`
+
+
+##### Haskell Dockerfile Linter
+
+Lint, or a linter, is a static code analysis tool used to flag programming errors, bugs, stylistic errors and suspicious constructs.
+
+How to install `hadolint`: [Haskell Dockerfile Linter](https://github.com/hadolint/hadolint#install)
+
+Check if `hadolint` is installed:
+
+```console
+$ hadolint --version
+Haskell Dockerfile Linter 2.7.0-no-git
 ```
-... 
-STUDENT_FIRST_NAME=Ivan 
-STUDENT_LAST_NAME=Ivanov 
+Run `hadolint` to lint your Dockerfiles and fix errors and warnings if they are.
+
+**Usage Example:**
+
+```console
+$ cat Dockerfile 
+FROM nginx
+ADD info.conf /etc/nginx/conf.d/default.conf
+
+$ hadolint Dockerfile # 2 issues
+Dockerfile:1 DL3006 warning: Always tag the version of an image explicitly
+Dockerfile:2 DL3020 error: Use COPY instead of ADD for files and folders
+
+$ cat Dockerfile 
+FROM nginx:1.21.3
+COPY info.conf /etc/nginx/conf.d/default.conf
+
+$ hadolint Dockerfile # no issues
+```
+
+##### Private Docker repository
+
+How to create a private repository: [Documentation](https://docs.docker.com/docker-hub/repos/#private-repositories)
+
+
+### Test: Docker Compose Deployment
+
+The second step is that verify that your application can be deployed as Docker container.
+
+You need to prepare *docker-compose.yaml* that:
+
+- deploys *mongo* container:
+    - name: mongo
+    - port: 27017
+    - username: root
+    - password: example
+- deploys your application container:
+    - name: application
+    - port: 5000
+    - environment:
+        - MONGO_HOST: mongo
+        - MONGO_PORT: 27017
+        - BG_COLOR: teal
+
+
+Now you can deploy your application on the local PC and check how it works.
+
+**Step Result:**
+- the application is deployed (you can open it in browser)
+- issue is fixed on *Issue Page* page
+- data can be written to MongoDB on *Test DB Connectivity* page
+
+
+### Deployment Preparation 
+
+The next step is preparing Kubernetes manifest **manifest.yml** and deploy it to *local* Kubernetes.
+
+Your Kubernetes manifest should meet the following requirements:
+
+- Deploy application layer (your custom Docker image) based on *Deployment* and *Service*:
+    - Docker credentials have been gotten from Kubernetes secret
+    - Deployment name is *application*
+    - Deployment label is *application*
+    - Container name is *application*
+    - Service name is *application*
+    - Service port is *80*
+    - Container port is *5000*
+    - The number of replicas is *1*
+    - Add liveness/readiness probe: liveness probe to path /healthz, readiness probe to path /healthx
+    - Deploy strategy "Recreate"
+    - Run application with next resources: CPU: limit-0.5 request-0.2, Memory: limit-128Mi request-64Mi
+    - The deployment variables were obtained from the Kubernetes configmap *application*
+    - Add init container to deployment of app: wait until the mongo is available and running
+- Deploy data layer:
+    - StatefullSet name is *mongo*
+    - StatefullSet label is *mongo*
+    - Container name is *mongo*
+    - The number of replicas is *1*
+    - Run StatefullSet with next resources:
+        - CPU: limit-0.5 request-0.2
+        - Memory: limit-256Mi request-128Mi
+    - Mongo credentials have been gotten from Kubernetes secret mongo
+    - Secret name is *mongo*
+- Deploy presentation layers based on NGINX Ingress:
+    - NGINX Ingress name is *nginx*
+    - Host is `<nsurname>.application.com`
+    - Port is *80*
+
+**Step Result:**
+- the application is deployed in your *local* Kubernetes;
+- the application is accessed through `<nsurname>.application.com` URL
+
+### Local Machine Preparation
+**Vagrant (optional)**
+Vagrantfile can be used for VM provisioning with required tools (Docker, Minikube, Hadolint, Kubectl, etc.).
+Otherwise required tools must be installed on your local machine.
+
+Futher elaboration of installing and checking tools can be found in the following sections.
+
+**Minikube (mandatory)**
+
+How to install and run minikube: [minikube start](https://minikube.sigs.k8s.io/docs/start/)
+
+Start Minikube and check if it is running:
+
+To start Minikube run `minikube start --vm-driver=$your_vm_provider` command, where *$your_vm_provider* is your [virtualization product](https://minikube.sigs.k8s.io/docs/drivers/). 
+For example:
+```console
+$ minikube start --vm-driver=hyperkit
 ...
-```
-Save actual POD’s logs (full output) into `$HOME/k8s_pods/default-envtest.log` file
 
-### Task 8 (advanced):
-Create a Pod (namespace: default, name: i-know-who-i-am, image: busybox:1.34, container process: env && sleep infinity). Specify following ENV variables for the main container:
-
-`MY_NODE_NAME` should contain name of pod node
-`MY_POD_NAME` should contain name of pod (do not provide it manually)
-`MY_POD_NAMESPACE` should contain name of pod namespace (do not provide it manually)
-`MY_POD_IP` should contain pod IP address
-`MY_POD_SERVICE_ACCOUNT` should contain a pod service account
-
-
-### Task 9:
-Delete all pods in clean-up namespace.
-
-### Task 10(advanced)
-
-Create a static pod.
-
-Requirements:
-
-Pod name: nginx-static
-Pod image: nginx:alpine
-Pod label: app=nginx-static
-Namespace: static
-Container Port: 80
-How to verify: Try to delete static pod. It should be recreated
-
-Do not forget to copy secret phrase, test will fail after next task.
-
-### Task 11(advanced):
-
-Delete a static pod nginx-static
-
-## Deployments
-
-### Task 1:
-Create a new deployment called nginx-deploy:
-
-Requirements:
- Name: nginx-deploy
- Image: nginx:1.19-alpine
- Namespace: default
- Replicas: 1
- Labels: app=nginx-deploy
-Do not forget to copy secret phrase, test will fail after task 3.
-
-### Task 2:
-Inspect the details listed below, add necessary options to kubectl create deploy command to produce following deployment configuration:
-
-Name: easy-peasy
-Image: busybox:1.34
-Replicas: 5
-Command: sleep infinity
-### Task 3:
-Scale nginx-deploy deployment to 6 replicas.
-
-### Task 4:
-Inspect the details listed below and create deployment:
-
-Deployment Name: <youname>-app
-Replicas: 1
-Deployment Labels:
-  task: deploy
-  app: <youname>-app
-  student: <youname>
-Pod(s) Labels:
-   deploy: <youname>-app
-   kind: redis
-   role: master
-   tier: db
-Container:
-   Image: redis:5-alpine
-   Port: 6379
-   Name: redis-master
-Init Container:
-   Image: busybox:1.34
-   Command: sleep 10
-
-### Task 5:
-Current deployment nginx-deploy release has nginx:1.19-alpine image.New release should use nginx:1.21-alpine.Use rolling update process
-
-### Task 6:
-A lemon deployment has been deployed in namespace trouble, but there are no pods associated with it. Figure out the root cause and fix the issue.
-
-### Task 7:
-A orange deployment has been deployed in namespace trouble, but it doesn’t work properly. Figure out the root cause and fix the issue.
-
-## StatefulSets 
-
-### Task 1:
-
-Create a new **StatefulSet**:
-
-**Requirements**:
- - **Name**: `random-generator`
- - **Image**: `sbeliakou/random-generator:1`
- - **Namespace**: `default`
- - **Replicas**: `3`
- - **Service**: `random-generator`
- - **Labels**: `app=random-generator`
-Do not forget to copy secret phrase, test will fail after task 3.
-
-### Task 2:
-
-Add volumeClaimTemplates to random-generator sts. Recreate statefulset if it’s needed.
-
-- **Name**: `logs`
-- **mountPath**: `/logs`
-Capacity: 10Mi
-accessMode: ReadWriteOnce
-
-### Task 3:
-Update container’s image to version `2`.
-Please pay attention to the way how StatefulSet recreates pods. It starts from 2 and goes to 0.
-
-### Task 4:
-
-Run any test pod. Using nslookup check the record of random-generator service. Save the output of the 
-below commands to `$HOME/k8s_sts.tx`t
-```
-nslookup random-generator-0.random-generator.default.svc.cluster.local
-nslookup random-generator-1.random-generator.default.svc.cluster.local
-nslookup random-generator-2.random-generator.default.svc.cluster.local
+$ minikube status
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
 ```
 
+Enable NGINX Ingress in MiniKube and check if it is running:
 
-## DaemonSets
+```console
+$ minikube addons enable ingress
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v1.0.0-beta.3
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+🔎  Verifying ingress addon...
+🌟  The 'ingress' addon is enabled
 
-### Task 1:
-
-Create a new node and set up a **worker** role for it.
-
-Remember to copy secret phrase, test will fail after task 5.
-
-### Task 2:
-Taint your nodes.
-
-**Requirements**:
-- **control-plane**:
-    - _key_: `node-role.kubernetes.io/control-plane`
-    - _effect_: `NoSchedule`
-- **worker**:
-  - key: `node-role.kubernetes.io/worker`
-  - effect: `NoSchedule`
-Do not forget to copy secret phrase, test will fail after task 6.
-
-### Task 3:
-
-Deploy **daemonset**
-
-**Requirements**:
-- **Name**: `fluentd-elasticsearch`
-- **Image**: `quay.io/fluentd_elasticsearch/fluentd:v4`
-Please pay attention how many pods were created and why.
-
-Do not forget to copy secret phrase, test will fail after next task.
-
-### Task 4:
-
-Modify **fluentd-elasticsearch** _*DaemonSet*_ to ensure that pods run on every **node**.You should change only DaemonSet configuration!
-
-Do not forget to copy secret phrase, test will fail after next task.
-
-### Task 5:
-
-Create one more node and set up **worker** role for it.
-
-Please pay attention on number of pods.
-
-Do not forget to copy secret phrase, test will fail after task 6.
-
-### Task 6:
-
-jq utility should be installed before running checker!
-
-Get details of nodes in JSON format and save it to `$HOME/nodes-info.json` file.
-Delete all worker nodes.
-**Untaint** control-plane node.
-Remove **fluentd-elasticsearch** _*DaemonSet*_.
-
-## Services
-
-### Task 1:
-
-Create **pod-info-svc** _*service*_ for **pod-info-app** _*deployment*_:
-
-Requirements:
-- **Name**: `pod-info-svc`
-- **Type**: `ClusterIP`
-- **Service Port**: `80`
-- **Service TargetPort**: `80`
-Investigate **pod-info-app** ***deployment*** and choose selector and do not change the deployment.
-
-### Task 2:
-
-Run a pod (based on image `busybox:1.28`) and execute the following commands (as given below) inside
-this pod and save outputs into files:
-
-```
-wget -q -O- pod-info-svc  
-$HOME/testing-clusterip-web.log
-nslookup pod-info-svc
-$HOME/testing-clusterip-nslookup.log
+$ kubectl --context minikube --namespace ingress-nginx get pods
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create--1-n9w2k     0/1     Completed   0          2m26s
+ingress-nginx-admission-patch--1-cnx7n      0/1     Completed   0          2m26s
+ingress-nginx-controller-69bdbc4d57-f7lfz   1/1     Running     0          2m26s
 ```
 
-### Task 3:
+#### Local Kubernetes Environment Preparation
 
-Create deployment **myapp**, **image**: `sbeliakou/web-pod-info:v1`, **replicas**: _*1*_
-Create **headless service** ***myapp-headless*** pointing to **myapp** pods
-Create **non-headless service** ***myapp-clusterip*** pointing to **myapp** pods
-Checking name resolution:
+To simulate **Production** environment, you need to create
+and configure your personal namespace in the local cluster.
 
-Non-headless service has own IP address (and port), and proxies traffic to backends:
+It can get done using `utils/local_minikube_preparation.sh` script.
+The script creates cluster resources (namespace, role, config context) based on your full name (the first name charater and last name):
 
+```console
+$ utils/local_minikube_preparation.sh "Anton Butsko"
+Switched to context "minikube".
+namespace/abutsko created
+serviceaccount/abutsko created
+role.rbac.authorization.k8s.io/abutsko created
+rolebinding.rbac.authorization.k8s.io/abutsko created
+User "minikube-abutsko" set.
+Context "minikube-abutsko" created.
+Switched to context "abutsko".
 ```
-$ kubectl run --rm -it test --image=busybox:1.27 --restart=Never nslookup myapp-clusterip
-```
-Headless service doesn’t proxy traffic to backends, it simply responds (on early dns lookup phase) with the IP address(es) where to go:
-```
-$ kubectl run --rm -it test --image=busybox:1.27 --restart=Never nslookup myapp-headless
+
+To interact with your cluster using created credentials, you need to switch to created context.
+
+Use `kubectl config get-contexts` command to see existed contexts:
+
+```console
+$ kubectl config get-contexts 
+CURRENT   NAME               CLUSTER         AUTHINFO           NAMESPACE
+*         abutsko            cluster.local   abutsko            abutsko
+          minikube           minikube        minikube           default
+          minikube-abutsko   minikube        minikube-abutsko   abutsko
 ```
 
-### Task 4:
-We have already created **hello-hello** web application for you. Create a new service to access this web application, 
-check the requirements. Figure out all necessary settings from the deployment.
+Use `kubectl config use-context <name>` command to change current context:
 
-**Requirements**:
-- **Name**: `hello-hello-service`
-- **Type**: `NodePort`
-- **Downstream Pod Port (Service targetPort)**: `80`
-- **Node Port**: `30300`
-For verification you can execute `curl $NODE_IP:30300` command or open the browser page ***http://$NODE_IP:30300***. 
-Substitute `$NODE_IP` with the IP address of your node.
+```console
+$ kubectl config use-context minikube-abutsko
+Switched to context "minikube-abutsko".
+```
+
+Check if your config context is set correctly so that you can interact with your cluster within only your namespace:
+
+```console
+$ kubectl config current-context
+minikube-abutsko
+$ kubectl get pods
+No resources found in abutsko namespace.
+$ kubectl --namespace default get pods
+Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:abutsko:abutsko" cannot list resource "pods" in API group "" in the namespace "default"
+```
+
+#### Kubernetes Secret Creation
+
+**Usage Example:**
+```console
+$ kubectl create secret generic docker-secret \
+    --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
+secret/docker-secret created
+```
+
+**Tips:**
+- open your deployed application (`/test_db` page) in a browser. To do that you need to think about:
+    - how to get cluster/node IP address where NGINX ingress listen to;
+    - how to resolve your application DNS name (e.g., abutsko.application.com) to IP from the previous step
+- do some request from the form on the page
+- if some readiness or liveness checks fail, think about some Probes settings in seconds
+- if you have troubles with docker secret investigate [Kubernetes secret documentation](https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets)
+
+**Be aware:**
+Possible, you will need to rerun the step of this test since you can reach your application and do some request only when it will be deployed.
+So that don't panic if this step failed on the first run.
+
+### Last Step
+
+**Pay attention:**
+Automatically test will check only **manifest.yml** correctness. 
+Finally task will be checked in the life session with your mentor on your local minikube cluster.
